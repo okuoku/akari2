@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
 	rt::TriangleMesh mesh;
 //	rt::OBJOperator::load("I:\\3DModel\\sdragon2.obj", &mesh);
-	if (!rt::OBJOperator::load("asset\\scene2.obj", &mesh)) {
+	if (!rt::OBJOperator::load("asset\\untitled.obj", &mesh)) {
 		return 0;
 	}
 
