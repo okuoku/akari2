@@ -167,7 +167,7 @@ public:
 				mesh_body.triangle.push_back(t); 
 			}
 		}
-		MaterialMap::iterator result = mesh_body.matmap.find("Material.001");
+		//MaterialMap::iterator result = mesh_body.matmap.find("Material.001");
 		//Wrong ??
 		//std::cout << &(result->second) << std::endl;
 		//std::cout << result->second.specular << std::endl;
