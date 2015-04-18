@@ -168,8 +168,9 @@ public:
 			}
 		}
 		MaterialMap::iterator result = mesh_body.matmap.find("Material.001");
-		std::cout << &(result->second) << std::endl;
-		std::cout << result->second.specular << std::endl;
+		//Wrong ??
+		//std::cout << &(result->second) << std::endl;
+		//std::cout << result->second.specular << std::endl;
 		
 
 		mesh->set(mesh_body);
