@@ -1,4 +1,4 @@
-#ifndef _QBVH_H_
+﻿#ifndef _QBVH_H_
 #define _QBVH_H_
 
 #include <vector>

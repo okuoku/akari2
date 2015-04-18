@@ -1,4 +1,4 @@
-#ifndef _KD_TREE_H_
+﻿#ifndef _KD_TREE_H_
 #define _KD_TREE_H_
 
 #include <algorithm>

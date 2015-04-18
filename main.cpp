@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <omp.h>
 
 #include "vec3.h"

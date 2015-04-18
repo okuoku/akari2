@@ -1,4 +1,4 @@
-#ifndef _OBJ_MESH_
+﻿#ifndef _OBJ_MESH_
 #define _OBJ_MESH_
 
 #include "vec3.h"

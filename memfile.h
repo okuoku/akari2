@@ -1,4 +1,4 @@
-#ifndef _MEM_FILE_H_
+﻿#ifndef _MEM_FILE_H_
 #define _MEM_FILE_H_
 
 #include <memory>
