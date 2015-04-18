@@ -11,6 +11,8 @@
 #include "memfile.h"
 #include "textutil.h"
 
+#include "image.h"
+
 namespace hstd {
 
 namespace rt {
@@ -54,6 +56,10 @@ public:
 		Float3 specular;
 		float specular_coefficient = 0;
 		float metalic = 0;
+		Image* tex = NULL;
+		Image* tex_attrib = NULL;
+		bool proj_send = false;
+		bool proj_recv = false;
 		
 		for (;;) {
 			std::string now_line;
@@ -68,8 +74,12 @@ public:
 
 			if (ret[0] == "newmtl") {
 				now_material_name = ret[1];
+				tex = NULL;
+				tex_attrib = NULL;
+				proj_send = NULL;
+				proj_recv = NULL;
 			} else if (ret[0] == "endmtl") {
-				matmap->insert(std::pair<std::string, Material>(now_material_name, Material(diffuse, specular, specular_coefficient, metalic)));
+				matmap->insert(std::pair<std::string, Material>(now_material_name, Material(diffuse, specular, specular_coefficient, metalic,tex,tex_attrib,proj_send,proj_recv)));
 				now_material_name = "";
 			} else if (ret[0] == "diffuse" && ret.size() >= 4) {
 				const float x = atof(ret[1].c_str());
@@ -87,6 +97,24 @@ public:
 			} else if (ret[0] == "specular_coefficient" && ret.size() >= 2) {
 				const float x = atof(ret[1].c_str());
 				specular_coefficient = x;
+			} else if (ret[0] == "xxmap") {
+				/* Load texture */
+				std::cout << "Texture: " << ret[1] << std::endl;
+				tex = new Image(ret[1].c_str());
+			} else if (ret[0] == "xxmap_attrib") {
+				/* Load texture */
+				std::cout << "Texture attrib: " << ret[1] << std::endl;
+				tex_attrib = new Image(ret[1].c_str());
+			} else if (ret[0] == "xxprojection") {
+				if (ret[1] == "receive") {
+				    /* Projection receive */
+				    std::cout << "Projection receive" << std::endl;
+				    proj_recv = true;
+				} else if (ret[1] == "send") {
+				    /* Projection send */
+				    std::cout << "Projection send" << std::endl;
+				    proj_send = true;
+				}
 			}
 		}
 

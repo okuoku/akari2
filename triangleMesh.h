@@ -10,6 +10,8 @@
 #include "memfile.h"
 #include "textutil.h"
 
+#include "image.h"
+
 namespace hstd {
 
 namespace rt {
@@ -19,9 +21,30 @@ struct Material {
 	Float3 specular;
 	float specular_coefficient;
 	float metalic;
+	Image* tex_diffuse;
+	Image* tex_attrib;
+	bool projection_receive;
+	bool projection_send;
 
 	Material(Float3& diffuse, Float3& specular, float specular_coefficient, float metalic) :
-	diffuse(diffuse), specular(specular), specular_coefficient(specular_coefficient), metalic(metalic) {}
+	diffuse(diffuse), specular(specular), specular_coefficient(specular_coefficient), metalic(metalic) {
+	    /* FIXME: Say something */
+	    tex_diffuse = NULL;
+	    tex_attrib = NULL;
+	    projection_receive = false;
+	    projection_send = false;
+	}
+
+	Material(Float3& diffuse, Float3& specular, float specular_coefficient, float metalic, Image* img, 
+		 Image* attrib,
+		 bool proj_send, bool proj_recv) :
+	diffuse(diffuse), specular(specular), specular_coefficient(specular_coefficient), metalic(metalic) {
+	    /* FIXME: Assert texture existence and validity */
+	    tex_diffuse = img;
+	    tex_attrib = attrib;
+	    projection_receive = proj_recv;
+	    projection_send = proj_send;
+	}
 };
 
 typedef std::map<std::string, Material> MaterialMap;

@@ -23,6 +23,11 @@ public:
 	explicit Image(unsigned int width, unsigned int height) :
 	width_(width), height_(height), data_(width * height) {}
 
+	explicit Image(const char* filename) { /* FIXME: should be static LoadImage() */
+	    /* Do nothing */
+	    std::cout << "Loading image: " << filename << std::endl;
+	}
+
 	void resize(unsigned int width, unsigned int height) {
 		width_ = width;
 		height_ = height;
