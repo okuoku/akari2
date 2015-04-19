@@ -120,6 +120,9 @@ int main(int argc, char *argv[]) {
 						{
 							rt::Hitpoint now_hp;
 							Color througput(1, 1, 1);
+							Color projection_color;
+							float projection_alpha;
+							bool in_projection = false;
 							for (int i = 0; i < kMaxDepth; ++i) {
 								//bool result1 = false;
 								bool result1 = mesh.intersect(now_ray, &now_hp);
@@ -154,8 +157,10 @@ int main(int argc, char *argv[]) {
 								float metalic;
 								if (material->tex_diffuse) { /* the triangle had a texture */
 								    if (material->projection_send) {
-									/* Ignore it for now */
+									/* Skip this triangle and set in_projection states */
 									now_ray = rt::Ray(hp_position +  1e-3f * now_ray.dir, now_ray.dir);
+									t.fetchTextures(now_hp.b1, now_hp.b2, &projection_color, &projection_alpha, NULL);
+									in_projection = true;
 									continue;
 								    }
 								    specular = material->specular;
@@ -168,6 +173,12 @@ int main(int argc, char *argv[]) {
 								    metalic = material->metalic;
 								    diffuse = material->diffuse;
 								}
+								if (in_projection && material->projection_receive) {
+								    if(projection_alpha > 1e-4f){
+									diffuse = projection_color;
+								    }
+								}
+								in_projection = false;
 
 								rt::PhongBRDF phong(specular, specular_coefficient);
 								rt::LambertianBRDF lambertian(diffuse);

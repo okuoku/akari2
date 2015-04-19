@@ -69,11 +69,11 @@ public:
 	};
 	
 	Color& atUV(float u, float v) {
-		return at(std::min(u * width_, (float)width_), std::min((1.0f - v) * height_, (float)height_));
+		return at(std::min(u * width_, (float)(width_-1)), std::min((1.0f - v) * height_, (float)(height_-1)));
 	}
 
 	float alphaUV(float u, float v) {
-		return atAlpha(std::min(u * width_, (float)width_), std::min(v * height_, (float)height_));
+		return atAlpha(std::min(u * width_, (float)(width_-1)), std::min((1.0f - v) * height_, (float)(height_-1)));
 	}
 
 	static Image* LoadImageStb(const char* filename) {
