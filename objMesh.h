@@ -183,10 +183,10 @@ public:
 				const float y = atof(ret[2].c_str());
 				const float z = atof(ret[3].c_str());
 				mesh_body.vn.push_back(Float3(x, y, z));
-			} else if (ret[0] == "vt" && ret.size() >= 4) {
+			} else if (ret[0] == "vt" && ret.size() >= 3) {
 				const float x = atof(ret[1].c_str());
 				const float y = atof(ret[2].c_str());
-				const float z = atof(ret[3].c_str());
+				const float z = 0.0f; // atof(ret[3].c_str());
 				mesh_body.vt.push_back(Float3(x, y, z));
 			} else if (ret[0] == "f" && ret.size() >= 4) {
 				const Int3 f1 = face_to_data(ret[1]);

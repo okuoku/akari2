@@ -134,6 +134,7 @@ int main(int argc, char *argv[]) {
 						
 								const rt::TriangleElement t = mesh.getTriangle(now_hp.triangle_index);
 
+
 								// 法線
 								const Float3 e1 = normalize(*t.v[1] - *t.v[0]);
 								const Float3 e2 = normalize(*t.v[2] - *t.v[0]);
@@ -142,16 +143,38 @@ int main(int argc, char *argv[]) {
 
 								rt::Material* material = t.material;
 
+
 								if (material == NULL)
 									continue;
 
 								rt::BRDF* now_brdf = NULL;
-								rt::PhongBRDF phong(material->specular, material->specular_coefficient);
-								rt::LambertianBRDF lambertian(material->diffuse);
+								Float3 diffuse;
+								Float3 specular;
+								float specular_coefficient;
+								float metalic;
+								if (material->tex_diffuse) { /* the triangle had a texture */
+								    if (material->projection_send) {
+									/* Ignore it for now */
+									now_ray = rt::Ray(hp_position +  1e-3f * now_ray.dir, now_ray.dir);
+									continue;
+								    }
+								    specular = material->specular;
+								    specular_coefficient = material->specular_coefficient;
+								    metalic = 0.1; // material->metalic;
+								    t.fetchTextures(now_hp.b1, now_hp.b2, &diffuse, NULL, NULL);
+								} else {
+								    specular = material->specular;
+								    specular_coefficient = material->specular_coefficient;
+								    metalic = material->metalic;
+								    diffuse = material->diffuse;
+								}
+
+								rt::PhongBRDF phong(specular, specular_coefficient);
+								rt::LambertianBRDF lambertian(diffuse);
 							
 								// std::cout << material->specular << " " << material->diffuse << " " << material->specular_coefficient << std::endl;
 
-								if (random.next01() < material->metalic) {
+								if (random.next01() < metalic) {
 									// スペキュラ
 									now_brdf = &phong;
 

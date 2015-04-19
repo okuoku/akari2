@@ -63,6 +63,30 @@ struct TriangleElement {
 		vt[0] = vt[1] = vt[2] = NULL;
 		material = NULL;
 	}
+
+	inline void fetchTextures(float b1, float b2, Float3* diffuse, float* alpha, Float3* attrib) const {
+	    Float3 m;
+	    m = *vt[0] + b1 * (*vt[1] - *vt[0]) + b2 * (*vt[2] - *vt[0]);
+	    if (diffuse) {
+		if (material->tex_diffuse) {
+		    *diffuse = material->tex_diffuse->atUV(m.x, m.y);
+#if 0
+                    printf("Diffuse: %f,%f => %f,%f = (%f,%f,%f)\n",
+                           b1,b2, m.x, m.y, diffuse->x, diffuse->y, diffuse->z);
+#endif
+		}
+	    }
+	    if (alpha) {
+		if (material->tex_diffuse) {
+		    *alpha = material->tex_diffuse->alphaUV(m.x, m.y);
+		}
+	    }
+	    if (attrib) {
+		if (material->tex_attrib) {
+		    *attrib = material->tex_attrib->atUV(m.x, m.y);
+		}
+	    }
+	}
 };
 
 class TriangleMesh {
