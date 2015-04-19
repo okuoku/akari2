@@ -70,17 +70,22 @@ public:
 				continue;
 			}
 
+                        std::cout << "line: " << now_line.c_str() << std::endl;
+
 			std::vector<std::string> ret = split(now_line, ' ');
 
 			if (ret[0] == "newmtl") {
+				std::cout << "Material [[ " << ret[1].c_str() << std::endl;
 				now_material_name = ret[1];
+			} else if (ret[0] == "endmtl") {
+				std::cout << "]]" << std::endl;
+				matmap->insert(std::pair<std::string, Material*>(now_material_name, new Material(diffuse, specular, specular_coefficient, metalic,tex,tex_attrib,proj_send,proj_recv)));
+				//matmap->insert(std::pair<std::string, Material>(now_material_name, Material(diffuse, specular, specular_coefficient, metalic)));
+				now_material_name = "";
 				tex = NULL;
 				tex_attrib = NULL;
-				proj_send = NULL;
-				proj_recv = NULL;
-			} else if (ret[0] == "endmtl") {
-				matmap->insert(std::pair<std::string, Material>(now_material_name, Material(diffuse, specular, specular_coefficient, metalic,tex,tex_attrib,proj_send,proj_recv)));
-				now_material_name = "";
+				proj_send = false;
+				proj_recv = false;
 			} else if (ret[0] == "diffuse" && ret.size() >= 4) {
 				const float x = atof(ret[1].c_str());
 				const float y = atof(ret[2].c_str());
@@ -100,11 +105,11 @@ public:
 			} else if (ret[0] == "xxmap") {
 				/* Load texture */
 				std::cout << "Texture: " << ret[1] << std::endl;
-				tex = new Image(ret[1].c_str());
+				tex = Image::LoadImageStb(ret[1].c_str());
 			} else if (ret[0] == "xxmap_attrib") {
 				/* Load texture */
 				std::cout << "Texture attrib: " << ret[1] << std::endl;
-				tex_attrib = new Image(ret[1].c_str());
+				tex_attrib = Image::LoadImageStb(ret[1].c_str());
 			} else if (ret[0] == "xxprojection") {
 				if (ret[1] == "receive") {
 				    /* Projection receive */
@@ -156,9 +161,11 @@ public:
 
 				MaterialMap::iterator result = mesh_body.matmap.find(ret[1]);
 				if (result == mesh_body.matmap.end()) {
+					std::cout << "Warning: unknown material name : " << ret[1].c_str() << std::endl;
 					now_material = NULL;
 				} else {
-					now_material = &(result->second);
+					std::cout << "Using : " << ret[1].c_str() << std::endl;
+					now_material = (result->second);
 
 //					std::cout << result->second.specular << std::endl;
 

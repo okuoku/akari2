@@ -6,6 +6,8 @@
 #include <vector>
 #include "vec3.h"
 
+#define STB_IMAGE_STATIC
+#include "stb/stb_image.h"
 
 
 namespace hstd {
@@ -15,6 +17,7 @@ typedef Float3 Color;
 class Image {
 private:
 	std::vector<Color> data_;
+	std::vector<float> alpha_;
 	unsigned int width_, height_;
 public:
 	explicit Image() :
@@ -23,15 +26,12 @@ public:
 	explicit Image(unsigned int width, unsigned int height) :
 	width_(width), height_(height), data_(width * height) {}
 
-	explicit Image(const char* filename) { /* FIXME: should be static LoadImage() */
-	    /* Do nothing */
-	    std::cout << "Loading image: " << filename << std::endl;
-	}
 
 	void resize(unsigned int width, unsigned int height) {
 		width_ = width;
 		height_ = height;
 		data_.resize(width_ * height_, Color(0, 0, 0));
+		alpha_.resize(width_ * height_, 0);
 	}
 
 	unsigned int width() const { 
@@ -63,6 +63,51 @@ public:
 	const Color& at(unsigned int x, unsigned int y) const {
 		return data_[index(x, y)];
 	};
+
+	float atAlpha(unsigned int x, unsigned int y) {
+		return alpha_[index(x, y)];
+	};
+	
+	Color& atUV(float u, float v) {
+		return at(std::min(u * width_, (float)width_), std::min((1.0f - v) * height_, (float)height_));
+	}
+
+	float alphaUV(float u, float v) {
+		return atAlpha(std::min(u * width_, (float)width_), std::min(v * height_, (float)height_));
+	}
+
+	static Image* LoadImageStb(const char* filename) {
+	    std::cout << "Loading image: " << filename << std::endl;
+
+	    int x;
+	    int y;
+	    int components;
+	    float* ptr;
+	    Image* ret;
+
+	    ptr = stbi_loadf(filename, &x, &y, &components, 0 /* req_comp: False */);
+	    if (!ptr){
+		std::cout << "ERROR image: " << filename << " (ignored)" << std::endl;
+	    } else {
+		const int pitch = components * x;
+		printf("x: %d y: %d components: %d\n",x,y,components);
+		ret = new Image();
+		ret->resize(x,y);
+		for(int yy=0;yy!=y;yy++){
+		    for(int xx=0;xx!=x;xx++){
+			float* p = &ptr[pitch*yy+(components*xx)];
+			ret->data_[ret->index(xx,yy)] = Color(p[0],p[1],p[2]);
+			if(components == 4){
+			    ret->alpha_[ret->index(xx,yy)] = p[4];
+			}else{
+			    ret->alpha_[ret->index(xx,yy)] = 1.0f;
+			}
+		    }
+		}
+		stbi_image_free(ptr);
+	    }
+	    return ret;
+	}
 };
 
 
